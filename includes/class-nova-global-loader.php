@@ -9,7 +9,7 @@ class Nova_Global_Loader {
     public function __construct() {
  
         $this->actions = array();
-        $this->filters = array();
+        $this->filters = array();      
 
     }
  
@@ -20,7 +20,7 @@ class Nova_Global_Loader {
     public function add_filter( $hook, $component, $callback ) {
         $this->filters = $this->add( $this->filters, $hook, $component, $callback );
     }
- 
+
     private function add( $hooks, $hook, $component, $callback ) {
  
         $hooks[] = array(
@@ -34,15 +34,7 @@ class Nova_Global_Loader {
     }
  
     public function run() {
- 
-        foreach ( $this->filters as $hook ) {
-            add_filter( $hook['hook'], array( $hook['component'], $hook['callback'] ) );
-        }
- 
-        foreach ( $this->actions as $hook ) {
-            add_action( $hook['hook'], array( $hook['component'], $hook['callback'] ) );
-        }
- 
+
     }
  
 }

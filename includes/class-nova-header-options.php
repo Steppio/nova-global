@@ -10,102 +10,18 @@ class Nova_Global_Header_Options {
 
 	public $options;
 
+	public $filename;
+
 	public function __construct() {
 
 		$this->options = get_option('nova_header_options');
-		$this->register_header_settings_and_fields();
+
+		$this->filename = __FILE__;
 
 	}
-
-	public function add_menu_page() {
-		add_options_page('Nova Options', 'Nova Options', 'administrator', __FILE__, array('Nova_Global_Header_Options', 'display_nova_options_page'));
-	}
-
-	public function display_nova_options_page() {
-		?>
-
-		<div class="wrap">
-		
-			<h2>Nova Theme Options</h2>
-		
-            <?php
-                //we check if the page is visited by click on the tabs or on the menu button.
-                //then we get the active tab.
-                $active_tab = "header-options";
-                if(isset($_GET["tab"]))
-                {
-
-					// switch ($_GET["tab"]) {
-					//     case "header-options":
-					//         $active_tab = "header-options";
-					//         break;
-					//     case "bar":
-					//         $active_tab = "footer-options";
-					//         break;
-					// }
-
-                    if($_GET["tab"] == "header-options")
-                    {
-                        $active_tab = "header-options";
-                    }
-                    else
-                    {
-                        $active_tab = "footer-options";
-                    }
-
-                    print_r($active_tab);
-                    die();
-                }
-            ?>
-
-            <!-- wordpress provides the styling for tabs. -->
-            <h2 class="nav-tab-wrapper">
-                
-                <!-- when tab buttons are clicked we jump back to the same page but with a new parameter that represents the clicked tab. accordingly we make it active -->
-                <a href="#" id="header-options" class="nav-tab <?php if($active_tab == 'header-options'){echo 'nav-tab-active';} ?> "><?php _e('Header Options', 'sandbox'); ?></a>
-                <a href="#" id="footer-options" class="nav-tab <?php if($active_tab == 'footer-options'){echo 'nav-tab-active';} ?>"><?php _e('Footer Options', 'sandbox'); ?></a>
-            </h2>
-			<form method="post" action="options.php" enctype="multipart/form-data">
-
-				<div class="header-options nova-tab">
-
-					<?php settings_fields('nova_header_options'); ?>
-					<?php do_settings_sections(__FILE__); ?>
-
-					<?php 
-					// $o = get_option('nova_header_options');
-					// echo '<pre>';
-					// echo $o['nova_header_colour'];
-					// echo '</pre>';
-					?>
-
-				</div>
-
-				<div class="footer-options nova-tab">
-					<input type="text" name="nova_footer_options[text-input]">
-				</div>
-
-				<p class="submit">
-					<input name="submit" type="submit" class="button-primary" />
-				</p>
-			</form>
-		</div>
-
-		<script>
-			jQuery( document ).ready(function() {
-				jQuery( ".nav-tab" ).click(function() {
-					jQuery( ".nova-tab" ).css('display', 'none');
-					var attr = '.' + jQuery( this ).attr( 'id' );
-					console.log( attr );
-					jQuery( attr ).css( 'display', 'block' );
-				});
-			});
-		</script>
-
-		<?php 
-	}
-
+	
 	public function register_header_settings_and_fields() {
+
 		register_setting('nova_header_options', 'nova_header_options', array($this, 'nova_header_validate_options')); // 3rd optional callback
 		add_settings_section('nova_header_section', 'Header Settings', array($this, 'nova_main_section_init'), __FILE__); // id, title of section, cb, page
 		add_settings_field('nova_header_colour', 'Header Colour', array($this, 'nova_header_colour_setting'), __FILE__, 'nova_header_section');
@@ -118,6 +34,10 @@ class Nova_Global_Header_Options {
 		add_settings_field('nova_header_desktop_padding', 'Header Desktop Padding', array($this, 'nova_header_desktop_padding_setting'), __FILE__, 'nova_header_section');
 		add_settings_field('nova_header_mobile_menu_background_colour', 'Header Mobile Menu Background Colour', array($this, 'nova_header_mobile_menu_background_colour_setting'), __FILE__, 'nova_header_section');
 		add_settings_field('nova_header_mobile_menu_text_colour', 'Header Mobile Menu Text Colour', array($this, 'nova_header_mobile_menu_text_colour_setting'), __FILE__, 'nova_header_section');
+	}
+
+	public function get_filename() {
+		return $this->filename;
 	}
 
 	public function nova_main_section_init() {
@@ -199,11 +119,3 @@ class Nova_Global_Header_Options {
 	}
 
 };
-
-add_action('admin_menu', function() {
-	Nova_Global_Header_Options::add_menu_page();
-});
-
-add_action('admin_init', function() {
-	new Nova_Global_Header_Options();
-});

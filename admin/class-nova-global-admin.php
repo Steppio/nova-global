@@ -4,12 +4,13 @@ class Nova_Global_Admin {
  
     private $version;
  
+    private $options;
+
+    public $header_filename;
+
     public function __construct( $version ) {
         
         $this->version = $version;
-
-        $this->add_menu_page();
-        $this->load_dependencies();
 
     }
 
@@ -26,10 +27,15 @@ class Nova_Global_Admin {
     }
 
     public function add_menu_page() {
-        add_options_page('Nova Options', 'Nova Options', 'administrator', __FILE__, array('Nova_Global_Header_Options', 'display_nova_options_page'));
+        
+        add_options_page('Nova Options', 'Nova Options', 'administrator', __FILE__, array($this, 'display_nova_options_page'));
+
     }
 
-    public function display_nova_options_page() {
+    public function display_nova_options_page() {          
+        $header_options = new Nova_Global_Header_Options( );
+        $header_options->register_header_settings_and_fields();
+        $header_filename = $header_options->get_filename();
         ?>
 
         <div class="wrap">
@@ -78,7 +84,7 @@ class Nova_Global_Admin {
                 <div class="header-options nova-tab">
 
                     <?php settings_fields('nova_header_options'); ?>
-                    <?php do_settings_sections(__FILE__); ?>
+                    <?php do_settings_sections($header_filename); ?>
 
                     <?php 
                     // $o = get_option('nova_header_options');
@@ -113,6 +119,28 @@ class Nova_Global_Admin {
         <?php 
     }
 
+    /**
+    * Registers all hooks
+    */
+    public function add_hooks() {
+
+        add_action( 'admin_menu', array( $this, 'add_menu_page' ) );
+
+    }
+
+
+    // public function nova_add_settings_field() {
+ 
+    //     add_meta_box(
+    //         'single-post-meta-manager-admin',
+    //         'Single Post Meta Manager',
+    //         array( $this, 'render_meta_box' ),
+    //         'post',
+    //         'normal',
+    //         'core'
+    //     );
+ 
+    // }
  
     // public function add_meta_box() {
  
@@ -131,13 +159,12 @@ class Nova_Global_Admin {
     //     require_once plugin_dir_path( __FILE__ ) . 'partials/single-post-meta-manager.php';
     // }
  
-}
+};
 
+// add_action('admin_menu', function() {
+//     Nova_Global_Admin::add_menu_page();
+// });
 
-add_action('admin_menu', function() {
-    Nova_Global_Admin::add_menu_page();
-});
-
-add_action('admin_init', function() {
-    new Nova_Global_Admin();
-});
+// add_action('admin_init', function() {
+//     new Nova_Global_Admin( NOVA_GLOBAL_VERSION );
+// });

@@ -29,7 +29,6 @@ if ( ! defined( 'WPINC' ) ) {
 
 // IMPORTS
 require_once( NOVA_GLOBAL_VERSION_DIR . '/includes/class-nova-global.php' );
-// require_once( NOVA_GLOBAL_VERSION_DIR . '/includes/class-nova-header-options.php' );
 
 function run_nova_global() {
 
